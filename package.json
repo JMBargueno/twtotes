@@ -6,7 +6,7 @@
     "start": "npm run prod",
     "build": "tsc -p .",
     "build:live": "nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/index.ts",
-    "prod": "npm ci && npm run build && node dist/index.js",
+    "prod": "npm ci && npm i && npm run build && node dist/index.js",
     "compodoc": "npx compodoc -p tsconfig.json src",
     "docs": "compodoc -p tsconfig.json -s",
     "test": "echo \"Error: no test specified\" && exit 1"
