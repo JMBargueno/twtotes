@@ -1,0 +1,32 @@
+{
+  "name": "twotes",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run build:live",
+    "build": "tsc -p .",
+    "build:live": "nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/index.ts",
+    "prod":"npm run build && node dist/index.js",
+    "compodoc": "npx compodoc -p tsconfig.json src",
+    "docs": "compodoc -p tsconfig.json -s",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["bot", "typescript", "node", "twitter"],
+  "author": "@jmbargueno",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/cron": "^1.7.2",
+    "@types/node": "^14.14.10",
+    "nodemon": "^2.0.6",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.1.2"
+  },
+  "dependencies": {
+    "@types/rx": "^4.1.2",
+    "cron": "^1.8.2",
+    "dotenv": "^8.2.0",
+    "rxjs": "^6.6.3",
+    "twitter-api-client": "^1.2.1"
+  }
+}
