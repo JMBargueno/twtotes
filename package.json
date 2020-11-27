@@ -6,12 +6,17 @@
     "start": "npm run build:live",
     "build": "tsc -p .",
     "build:live": "nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/index.ts",
-    "prod":"npm run build && node dist/index.js",
+    "prod": "npm run build && node dist/index.js",
     "compodoc": "npx compodoc -p tsconfig.json src",
     "docs": "compodoc -p tsconfig.json -s",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["bot", "typescript", "node", "twitter"],
+  "keywords": [
+    "bot",
+    "typescript",
+    "node",
+    "twitter"
+  ],
   "author": "@jmbargueno",
   "license": "ISC",
   "description": "",
