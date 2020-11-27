@@ -32,7 +32,7 @@ async function assertNewTweet() {
 }
 
 console.log(
-  `TWOTES iniciado con un intervalo de ${Number(
+  `TWTOTES iniciado con un intervalo de ${Number(
     process.env.INTERVAL_S!
   )} segundos`
 );
