@@ -106,6 +106,24 @@ export class TwitterBot {
       .catch((e) => console.log(e));
   }
 
+  private async followMentions(mentions: string[]) {
+    console.log("Comenzando a seguir");
+    let counter: number = 1;
+    for await (let user of mentions) {
+      await this.twitterClient.accountsAndUsers
+        .friendshipsCreate({
+          screen_name: user,
+        })
+        .then((result) => {
+          console.log(
+            `Usuario ${counter} de ${mentions.length} seguido con exito`
+          );
+          counter += 1;
+        })
+        .catch((e) => console.log(e));
+    }
+  }
+
   async participate(qUser: UsersShow) {
     let user: UsersShow = qUser;
     let tweet: Status = user.status;
@@ -128,6 +146,7 @@ export class TwitterBot {
         mentions = this.getMentions(tweet);
         await this.makeLike(tweet);
         await this.makeRetweet(tweet);
+        await this.followMentions(mentions)
         let responseTweet = this.constructTweet(
           hashtags[0].text,
           this.friendUsername
