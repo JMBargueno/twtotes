@@ -14,7 +14,7 @@ export class TwitterBot {
   constructor(
     private targetUsername: string,
     private twitterClient: TwitterClient,
-    private friendUsername: string
+    private rawFriends: string
   ) {}
 
   /**
@@ -124,6 +124,13 @@ export class TwitterBot {
     }
   }
 
+  public getRandomFriend(){
+    let friendsArray = process.env.FRIENDS!.split(",");
+    let randomFriend = friendsArray[getRandomArbitrary(0, friendsArray.length)]
+    console.log(randomFriend)
+    return randomFriend
+  }
+
   async participate(qUser: UsersShow) {
     let user: UsersShow = qUser;
     let tweet: Status = user.status;
@@ -149,7 +156,7 @@ export class TwitterBot {
         await this.followMentions(mentions)
         let responseTweet = this.constructTweet(
           hashtags[0].text,
-          this.friendUsername
+          this.getRandomFriend()
         );
         await this.replyTweet(responseTweet, tweet.id_str);
       } else {

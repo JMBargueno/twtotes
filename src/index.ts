@@ -17,6 +17,7 @@ async function assertNewTweet() {
     process.env.FRIEND!
   );
 
+ twitterBot.getRandomFriend()
   await twitterBot.getUser().then((result) => {
     console.log(
       `\nInstante: ${new Date().toLocaleString()}\nTweet: ${
@@ -36,6 +37,7 @@ console.log(
     process.env.INTERVAL_S!
   )} segundos`
 );
+
 
 async function doStuff() {
   console.log("\n##########################################");
