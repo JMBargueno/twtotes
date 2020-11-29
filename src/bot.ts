@@ -1,4 +1,4 @@
-import { TwitterClient } from "twitter-api-client";
+import { StatusesUserTimeline, TwitterClient } from "twitter-api-client";
 import TweetsClient from "twitter-api-client/dist/clients/TweetsClient";
 import UsersShow, {
   Status,
@@ -54,11 +54,11 @@ export class TwitterBot {
    * Función que devuelve el hashtag si es un sorteo
    * @param tweet
    */
-  private getRaffleHashtag(tweet: Status): string[] {
+  private getRaffleHashtag(tweet: any): string[] {
     return tweet.entities.hashtags;
   }
 
-  private getMentions(tweet: Status) {
+  private getMentions(tweet: any) {
     return tweet.entities.user_mentions;
   }
 
@@ -124,16 +124,30 @@ export class TwitterBot {
     }
   }
 
-  public getRandomFriend(){
+  public getRandomFriend() {
     let friendsArray = process.env.FRIENDS!.split(",");
-    let randomFriend = friendsArray[getRandomArbitrary(0, friendsArray.length)]
-    console.log(randomFriend)
-    return randomFriend
+    let randomFriend = friendsArray[getRandomArbitrary(0, friendsArray.length)];
+    console.log(randomFriend);
+    return randomFriend;
   }
 
-  async participate(qUser: UsersShow) {
+  public async getTweet(target: string): Promise<StatusesUserTimeline> {
+    return await this.twitterClient.tweets
+      .statusesUserTimeline({
+        screen_name: target,
+        count: 1,
+        exclude_replies: true,
+        include_rts: false,
+        tweet_mode: "extended",
+      })
+      .then((result) => {
+        return result[0];
+      });
+  }
+
+  async participate(qUser: UsersShow, rtweet: any) {
     let user: UsersShow = qUser;
-    let tweet: Status = user.status;
+    let tweet: any = rtweet;
     let hashtags: any[] = [];
     let mentions: string[] = [];
 
@@ -141,7 +155,7 @@ export class TwitterBot {
     console.log("\nSe inicia comprobación si es un sorteo");
 
     //Si esto es un sorteo
-    if (this.isRaffle(tweet.text.toLowerCase())) {
+    if (this.isRaffle(tweet.full_text.toLowerCase())) {
       console.log("Es un sorteo");
       console.log("\n--------------------------------------");
       console.log("\nComprobando si esta retwiteado y marcado como favorito");
@@ -153,7 +167,7 @@ export class TwitterBot {
         mentions = this.getMentions(tweet);
         await this.makeLike(tweet);
         await this.makeRetweet(tweet);
-        await this.followMentions(mentions)
+        await this.followMentions(mentions);
         let responseTweet = this.constructTweet(
           hashtags[0].text,
           this.getRandomFriend()

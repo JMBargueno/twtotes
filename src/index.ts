@@ -1,4 +1,4 @@
-import { TwitterClient } from "twitter-api-client";
+import { StatusesUserTimeline, TwitterClient } from "twitter-api-client";
 import { TwitterBot } from "./bot";
 require("dotenv").config();
 
@@ -13,18 +13,32 @@ async function assertNewTweet(target: string) {
   });
   let twitterBot = new TwitterBot(target, twitterClient, process.env.FRIEND!);
 
-  await twitterBot.getUser().then((result) => {
-    console.log(
-      `\nInstante: ${new Date().toLocaleString()}\nTweet: ${
-        result.status.text
-      }\nMarcado como favorito: ${result.status.favorited}\nRetweeteado: ${
-        result.status.retweeted
-      }`
-    );
-    twitterBot.participate(result);
+  await twitterBot.getUser().then(async (result) => {
+    await twitterBot.getTweet(result.screen_name).then((res) => {
+      let tweet: any = res;
+
+      /* console.log(tweet);
+      console.log(tweet.id_str);
+      console.log(tweet.full_text);
+      console.log(tweet.entities.hashtags);
+      console.log(tweet.entities.user_mentions);
+      console.log(tweet.favorited);
+      console.log(tweet.retweeted); */
+
+      console.log(
+        `\nInstante: ${new Date().toLocaleString()}\nTweet: ${
+          tweet.full_text
+        }\nMarcado como favorito: ${tweet.favorited}\nRetweeteado: ${
+          tweet.retweeted
+        }`
+      );
+
+      twitterBot.participate(result, tweet);
+    });
+    
   });
 
-  //
+  
 }
 
 function getTargetArray() {
