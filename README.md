@@ -18,7 +18,7 @@ To start, you have to create an .env in the root of the app and then create the 
 
 To get the values ​​of the first four variables, you need a [developer account on twitter](https://developer.twitter.com/en)
 
-When you have done the previous steps, the ideal would be to configure the array of random phrases, located in 'src/core/data/reply.data.ts'
+When you have done the previous steps, the ideal would be to configure the array of random phrases, located in 'src/core/data/reply.data.ts' and the sentences to check if its a giveaway in 'src/core/data/sentences.data.ts'
 
 ### Starting app
 
