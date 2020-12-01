@@ -1,8 +1,11 @@
-import { StatusesUserTimeline, TwitterClient } from "twitter-api-client";
+import { TwitterClient } from "twitter-api-client";
 import { TwitterBot } from "./bot";
+const chalk = require("chalk");
 require("dotenv").config();
 
 //https://kaffeine.herokuapp.com/
+
+let tryNumber = 1;
 
 /**
  * Contains the main flow of the app
@@ -24,12 +27,17 @@ async function assertNewTweet(target: string) {
       let tweet: any = res;
 
       console.log(
-        `\nDate&Time: ${new Date().toLocaleString()}\nTweet: ${tweet.full_text}`
+        `\n${chalk.blue(
+          "Date&Time"
+        )}: ${new Date().toLocaleString()}\n${chalk.blue("Tweet")}: ${
+          tweet.full_text
+        }`
       );
 
       twitterBot.participate(result, tweet);
     });
   });
+  console.log("\n#############################################");
 }
 
 /**
@@ -47,16 +55,26 @@ function getTargetArray() {
 async function doStuff() {
   const targets = getTargetArray();
 
+  console.log(
+    chalk.cyan(
+      `\n-------------------${new Date().toLocaleString()} Cycle nº ${tryNumber}---------------------\n`
+    )
+  );
+
   for (let target of targets) {
-    console.log(`\nNew check to ${target}`);
+    console.log(chalk.yellow(`\nNew check to ${target}`));
     await assertNewTweet(target);
   }
+  
+  tryNumber += 1;
 }
 
 console.log(
-  `TWTOTES started with an interval of ${Number(
-    process.env.INTERVAL_S!
-  )} seconds`
+  chalk.green(
+    `\nTWTOTES started with an interval of ${Number(
+      process.env.INTERVAL_S!
+    )} seconds`
+  )
 );
 
 setInterval(doStuff, Number(process.env.INTERVAL_S!) * 1000);

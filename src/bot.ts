@@ -6,6 +6,7 @@ import UsersShow, {
 import { REPLYDATA } from "./core/data/reply.data";
 import { KEYWORDSDATA } from "./core/data/sentences.data";
 import { getRandomArbitrary } from "./core/functions/functions";
+const chalk = require("chalk");
 
 /**
  * Clase twitter bot
@@ -93,7 +94,7 @@ export class TwitterBot {
         id: tweetId,
       })
       .then((result) => {
-        console.log("Liked successfully");
+        console.log(chalk.green("Liked successfully"));
       })
       .catch((e) => console.log(e));
   }
@@ -110,7 +111,7 @@ export class TwitterBot {
         id: tweetId,
       })
       .then((result) => {
-        console.log("Retweeted successfully");
+        console.log(chalk.green("Retweeted successfully"));
       })
       .catch((e) => console.log(e));
   }
@@ -129,7 +130,7 @@ export class TwitterBot {
         auto_populate_reply_metadata: true,
       })
       .then((result) => {
-        console.log("Replyed successfully");
+        console.log(chalk.green("Replyed successfully"));
       })
       .catch((e) => console.log(e));
   }
@@ -149,7 +150,9 @@ export class TwitterBot {
         })
         .then((result) => {
           console.log(
-            `User ${counter} of ${mentions.length} followed successfully`
+            chalk.green(
+              `User ${counter} of ${mentions.length} followed successfully`
+            )
           );
           counter += 1;
         })
@@ -199,11 +202,11 @@ export class TwitterBot {
     let hashtags: any[] = [];
     let mentions: string[] = [];
 
-    console.log("\nStarting giveaway verification...");
+    console.log(chalk.yellow(`\nStarting giveaway verification...`));
 
     if (this.isGiveaway(tweet.full_text.toLowerCase())) {
-      console.log("It's a giveaway");
-      console.log("\nChecking if it's retweeted and liked");
+      console.log(chalk.green("It's a giveaway"));
+      console.log(chalk.yellow(`\nChecking if it's retweeted and liked`));
 
       if (!tweet.retweeted && !tweet.favorited) {
         console.log("Not retweeted or liked");
@@ -222,7 +225,7 @@ export class TwitterBot {
         console.log("Already been retweeted or bookmarked");
       }
     } else {
-      console.log("Its not a giveaway");
+      console.log(chalk.red("Its not a giveaway"));
     }
   }
 }
