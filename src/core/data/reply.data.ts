@@ -1,3 +1,7 @@
+/**
+ * Array containing the phrases to be able to build the random response tweet
+ *
+ */
 export const REPLYDATA = [
   "que ilusión me haria tener esto",
   "ganaré esta vez?",
@@ -7,5 +11,5 @@ export const REPLYDATA = [
   "wow, ojala me toque",
   "illo primo mira esta",
   "nanana esto es de locos",
-  "como no me regalas nunca na, por lo menos que me toque mencionandote"
+  "como no me regalas nunca na, por lo menos que me toque mencionandote",
 ];

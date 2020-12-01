@@ -4,6 +4,11 @@ require("dotenv").config();
 
 //https://kaffeine.herokuapp.com/
 
+/**
+ * Contains the main flow of the app
+ *
+ * @param target User
+ */
 async function assertNewTweet(target: string) {
   let twitterClient = new TwitterClient({
     apiKey: process.env.API_KEY!,
@@ -11,55 +16,47 @@ async function assertNewTweet(target: string) {
     accessToken: process.env.ACCESS_TOKEN!,
     accessTokenSecret: process.env.ACCESS_TOKEN_SECRET!,
   });
+
   let twitterBot = new TwitterBot(target, twitterClient);
 
   await twitterBot.getUser().then(async (result) => {
     await twitterBot.getTweet(result.screen_name).then((res) => {
       let tweet: any = res;
 
-      /* console.log(tweet);
-      console.log(tweet.id_str);
-      console.log(tweet.full_text);
-      console.log(tweet.entities.hashtags);
-      console.log(tweet.entities.user_mentions);
-      console.log(tweet.favorited);
-      console.log(tweet.retweeted); */
-
       console.log(
-        `\nInstante: ${new Date().toLocaleString()}\nTweet: ${
-          tweet.full_text
-        }\nMarcado como favorito: ${tweet.favorited}\nRetweeteado: ${
-          tweet.retweeted
-        }`
+        `\nDate&Time: ${new Date().toLocaleString()}\nTweet: ${tweet.full_text}`
       );
 
       twitterBot.participate(result, tweet);
     });
-    
   });
-
-  
 }
 
+/**
+ * Forms the array of targets supplied in the .env
+ *
+ */
 function getTargetArray() {
   return process.env.TARGETS!.split(",");
 }
 
+/**
+ * Starts checking for new tweets on all provided targets in the array
+ *
+ */
 async function doStuff() {
   const targets = getTargetArray();
 
   for (let target of targets) {
-    console.log("\n##########################################");
-    console.log(`\nNuevo try a ${target}`);
+    console.log(`\nNew check to ${target}`);
     await assertNewTweet(target);
-    console.log("\n##########################################");
   }
 }
 
 console.log(
-  `TWTOTES iniciado con un intervalo de ${Number(
+  `TWTOTES started with an interval of ${Number(
     process.env.INTERVAL_S!
-  )} segundos`
+  )} seconds`
 );
 
 setInterval(doStuff, Number(process.env.INTERVAL_S!) * 1000);

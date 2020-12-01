@@ -18,7 +18,7 @@ export class TwitterBot {
   ) {}
 
   /**
-   * Funcion que a partir de un nombre de usuario consigue su ultimo tweet
+   * Get user data by string username
    *
    */
   async getUser(): Promise<UsersShow> {
@@ -29,10 +29,11 @@ export class TwitterBot {
   }
 
   /**
-   * Funcion que considera si el tweet es un sorteo
+   * Consider if the tweet its a giveaway
+   *
    * @param tweet
    */
-  private isRaffle(tweet: string): boolean {
+  private isGiveaway(tweet: string): boolean {
     let result: boolean = false;
     let counter = 0;
 
@@ -49,17 +50,29 @@ export class TwitterBot {
   }
 
   /**
-   * Función que devuelve el hashtag si es un sorteo
+   * Return hashtags in a tweet
+   *
    * @param tweet
    */
-  private getRaffleHashtag(tweet: any): string[] {
+  private getHashtags(tweet: any): string[] {
     return tweet.entities.hashtags;
   }
 
+  /**
+   * Return mentions in a tweet
+   *
+   * @param tweet
+   */
   private getMentions(tweet: any) {
     return tweet.entities.user_mentions;
   }
 
+  /**
+   * Construct a tweet like hashtag + sentence + friend
+   *
+   * @param hashtag
+   * @param friend
+   */
   private constructTweet(hashtag: string, friend: string) {
     let responses = REPLYDATA;
     let randomResponseIndex = getRandomArbitrary(0, responses.length - 1);
@@ -67,6 +80,12 @@ export class TwitterBot {
     return `#${hashtag} ${randomResponse} @${friend} `;
   }
 
+  /**
+   * Make like to the target's tweet
+   *
+   * @param tweet
+   *
+   */
   private async makeLike(tweet: Status) {
     let tweetId = tweet.id_str;
     await this.twitterClient.tweets
@@ -74,11 +93,16 @@ export class TwitterBot {
         id: tweetId,
       })
       .then((result) => {
-        console.log("Marcado con like con exito");
+        console.log("Liked successfully");
       })
       .catch((e) => console.log(e));
   }
 
+  /**
+   * Make retweet to the target´s tweet
+   *
+   * @param tweet
+   */
   private async makeRetweet(tweet: Status) {
     let tweetId = tweet.id_str;
     await this.twitterClient.tweets
@@ -86,11 +110,17 @@ export class TwitterBot {
         id: tweetId,
       })
       .then((result) => {
-        console.log("Retweet hecho con exito");
+        console.log("Retweeted successfully");
       })
       .catch((e) => console.log(e));
   }
 
+  /**
+   * Reply a tweet with the created tweet in {@Link constructTweet}
+   *
+   * @param responseTweet the tweet maked from the app
+   * @param tweetId the tweet´s id to reply
+   */
   private async replyTweet(responseTweet: string, tweetId: string) {
     await this.twitterClient.tweets
       .statusesUpdate({
@@ -99,13 +129,18 @@ export class TwitterBot {
         auto_populate_reply_metadata: true,
       })
       .then((result) => {
-        console.log("Reply hecho con exito");
+        console.log("Replyed successfully");
       })
       .catch((e) => console.log(e));
   }
 
+  /**
+   * Follow to all the users in the array of mentions
+   *
+   * @param mentions Users to follow
+   */
   private async followMentions(mentions: string[]) {
-    console.log("Comenzando a seguir");
+    console.log("Starting to follow...");
     let counter: number = 1;
     for await (let user of mentions) {
       await this.twitterClient.accountsAndUsers
@@ -114,7 +149,7 @@ export class TwitterBot {
         })
         .then((result) => {
           console.log(
-            `Usuario ${counter} de ${mentions.length} seguido con exito`
+            `User ${counter} of ${mentions.length} followed successfully`
           );
           counter += 1;
         })
@@ -122,6 +157,10 @@ export class TwitterBot {
     }
   }
 
+  /**
+   * Get a random friend provided on .env
+   *
+   */
   public getRandomFriend() {
     let friendsArray = process.env.FRIENDS!.split(",");
     let randomFriend = friendsArray[getRandomArbitrary(0, friendsArray.length)];
@@ -129,6 +168,11 @@ export class TwitterBot {
     return randomFriend;
   }
 
+  /**
+   * Get the latest tweet of a target excluding replies and rts
+   * @param target
+   *
+   */
   public async getTweet(target: string): Promise<StatusesUserTimeline> {
     return await this.twitterClient.tweets
       .statusesUserTimeline({
@@ -143,25 +187,28 @@ export class TwitterBot {
       });
   }
 
+  /**
+   * Execute all the functions to start the process
+   *
+   * @param qUser
+   * @param rtweet
+   */
   async participate(qUser: UsersShow, rtweet: any) {
     let user: UsersShow = qUser;
     let tweet: any = rtweet;
     let hashtags: any[] = [];
     let mentions: string[] = [];
 
-    console.log("\n--------------------------------------");
-    console.log("\nSe inicia comprobación si es un sorteo");
+    console.log("\nStarting giveaway verification...");
 
-    //Si esto es un sorteo
-    if (this.isRaffle(tweet.full_text.toLowerCase())) {
-      console.log("Es un sorteo");
-      console.log("\n--------------------------------------");
-      console.log("\nComprobando si esta retwiteado y marcado como favorito");
+    if (this.isGiveaway(tweet.full_text.toLowerCase())) {
+      console.log("It's a giveaway");
+      console.log("\nChecking if it's retweeted and liked");
 
       if (!tweet.retweeted && !tweet.favorited) {
-        console.log("No esta retwiteado o marcado como favorito");
+        console.log("Not retweeted or liked");
 
-        hashtags = this.getRaffleHashtag(tweet);
+        hashtags = this.getHashtags(tweet);
         mentions = this.getMentions(tweet);
         await this.makeLike(tweet);
         await this.makeRetweet(tweet);
@@ -172,10 +219,10 @@ export class TwitterBot {
         );
         await this.replyTweet(responseTweet, tweet.id_str);
       } else {
-        console.log("Ya ha sido retwitteado o marcado como favorito");
+        console.log("Already been retweeted or bookmarked");
       }
     } else {
-      console.log("No es un sorteo");
+      console.log("Its not a giveaway");
     }
   }
 }
