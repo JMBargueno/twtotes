@@ -1,4 +1,4 @@
-export const replyData = [
+export const REPLYDATA = [
   "que ilusión me haria tener esto",
   "ganaré esta vez?",
   "bro imaginate este sorteo",

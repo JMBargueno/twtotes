@@ -11,7 +11,7 @@ async function assertNewTweet(target: string) {
     accessToken: process.env.ACCESS_TOKEN!,
     accessTokenSecret: process.env.ACCESS_TOKEN_SECRET!,
   });
-  let twitterBot = new TwitterBot(target, twitterClient, process.env.FRIEND!);
+  let twitterBot = new TwitterBot(target, twitterClient);
 
   await twitterBot.getUser().then(async (result) => {
     await twitterBot.getTweet(result.screen_name).then((res) => {

@@ -3,7 +3,8 @@ import TweetsClient from "twitter-api-client/dist/clients/TweetsClient";
 import UsersShow, {
   Status,
 } from "twitter-api-client/dist/interfaces/types/UsersShowTypes";
-import { replyData } from "./core/data/reply.data";
+import { REPLYDATA } from "./core/data/reply.data";
+import { KEYWORDSDATA } from "./core/data/sentences.data";
 import { getRandomArbitrary } from "./core/functions/functions";
 
 /**
@@ -13,8 +14,7 @@ import { getRandomArbitrary } from "./core/functions/functions";
 export class TwitterBot {
   constructor(
     private targetUsername: string,
-    private twitterClient: TwitterClient,
-    private rawFriends: string
+    private twitterClient: TwitterClient
   ) {}
 
   /**
@@ -34,17 +34,15 @@ export class TwitterBot {
    */
   private isRaffle(tweet: string): boolean {
     let result: boolean = false;
+    let counter = 0;
 
-    //Mira si dentro del tweet lleva eso
-    if (
-      tweet.includes("sorteo") ||
-      tweet.includes("comenta con") ||
-      tweet.includes("retuit")
-    ) {
-      //Si contiene hashtag
-      if (tweet.includes("#")) {
-        result = true;
+    for (let keyword of KEYWORDSDATA) {
+      if (tweet.includes(keyword)) {
+        counter += 1;
       }
+    }
+    if (tweet.includes("#") && counter >= 2) {
+      result = true;
     }
 
     return result;
@@ -63,7 +61,7 @@ export class TwitterBot {
   }
 
   private constructTweet(hashtag: string, friend: string) {
-    let responses = replyData;
+    let responses = REPLYDATA;
     let randomResponseIndex = getRandomArbitrary(0, responses.length - 1);
     let randomResponse = responses[randomResponseIndex];
     return `#${hashtag} ${randomResponse} @${friend} `;
