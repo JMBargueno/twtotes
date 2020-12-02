@@ -25,7 +25,6 @@ async function assertNewTweet(target: string) {
   await twitterBot.getUser().then(async (result) => {
     await twitterBot.getTweet(result.screen_name).then((res) => {
       let tweet: any = res;
-
       console.log(
         `\n${chalk.blue(
           "Date&Time"
@@ -33,6 +32,7 @@ async function assertNewTweet(target: string) {
           tweet.full_text
         }`
       );
+      
 
       twitterBot.participate(result, tweet);
     });
@@ -57,12 +57,12 @@ async function doStuff() {
 
   console.log(
     chalk.cyan(
-      `\n-------------------${new Date().toLocaleString()} Cycle nº ${tryNumber}---------------------\n`
+      `\n|------------------- ${new Date().toLocaleString()} Iteration nº ${tryNumber} ---------------------|\n`
     )
   );
 
   for (let target of targets) {
-    console.log(chalk.yellow(`\nNew check to ${target}`));
+    console.log(chalk.yellow(`\nNew check to --> ${target}`));
     await assertNewTweet(target);
   }
   

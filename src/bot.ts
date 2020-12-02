@@ -176,18 +176,17 @@ export class TwitterBot {
    * @param target
    *
    */
-  public async getTweet(target: string): Promise<StatusesUserTimeline> {
+  public async getTweet(target: string) {
     return await this.twitterClient.tweets
       .statusesUserTimeline({
         screen_name: target,
-        count: 1,
         exclude_replies: true,
         include_rts: false,
         tweet_mode: "extended",
       })
       .then((result) => {
         return result[0];
-      });
+      }).catch(err => console.log(err))
   }
 
   /**
