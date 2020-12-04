@@ -28,11 +28,10 @@ async function assertNewTweet(target: string) {
       console.log(
         `\n${chalk.blue(
           "Date&Time"
-        )}: ${new Date().toLocaleString()}\n${chalk.blue("Tweet")}: ${
+        )}: ${new Date().toLocaleString()}\n${chalk.blue("Tweet")}: \n\n──────────────────────────────────────────────────────────────────────────────────────\n${
           tweet.full_text
-        }`
+        }\n──────────────────────────────────────────────────────────────────────────────────────`
       );
-      
 
       twitterBot.participate(result, tweet);
     });
@@ -65,7 +64,7 @@ async function doStuff() {
     console.log(chalk.yellow(`\nNew check to --> ${target}`));
     await assertNewTweet(target);
   }
-  
+
   tryNumber += 1;
 }
 
