@@ -1,29 +1,26 @@
-import { StatusesUserTimeline, TwitterClient } from "twitter-api-client";
-import TweetsClient from "twitter-api-client/dist/clients/TweetsClient";
-import UsersShow, {
-  Status,
-} from "twitter-api-client/dist/interfaces/types/UsersShowTypes";
-import { REPLYDATA } from "./core/data/reply.data";
-import { KEYWORDSDATA } from "./core/data/sentences.data";
-import { getRandomArbitrary } from "./core/functions/functions";
-const chalk = require("chalk");
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { TwitterClient } from 'twitter-api-client';
+import UsersShow, { Status } from 'twitter-api-client/dist/interfaces/types/UsersShowTypes';
+import { REPLYDATA } from './core/data/reply.data';
+import { KEYWORDSDATA } from './core/data/sentences.data';
+import { getRandomArbitrary } from './core/functions/functions';
+import chalk from 'chalk';
 
 /**
  * Clase twitter bot
  *
  */
 export class TwitterBot {
-  constructor(
-    private targetUsername: string,
-    private twitterClient: TwitterClient
-  ) {}
+  constructor(private targetUsername: string, private twitterClient: TwitterClient) {}
 
   /**
    * Get user data by string username
    *
    */
   async getUser(): Promise<UsersShow> {
-    let data = await this.twitterClient.accountsAndUsers.usersShow({
+    const data = await this.twitterClient.accountsAndUsers.usersShow({
       screen_name: this.targetUsername,
     });
     return Promise.resolve(data);
@@ -35,15 +32,15 @@ export class TwitterBot {
    * @param tweet
    */
   private isGiveaway(tweet: string): boolean {
-    let result: boolean = false;
+    let result = false;
     let counter = 0;
 
-    for (let keyword of KEYWORDSDATA) {
+    for (const keyword of KEYWORDSDATA) {
       if (tweet.includes(keyword)) {
         counter += 1;
       }
     }
-    if (tweet.includes("#") && counter >= 2) {
+    if (tweet.includes('#') && counter >= 2) {
       result = true;
     }
 
@@ -75,9 +72,9 @@ export class TwitterBot {
    * @param friend
    */
   private constructTweet(hashtag: string, friend: string) {
-    let responses = REPLYDATA;
-    let randomResponseIndex = getRandomArbitrary(0, responses.length - 1);
-    let randomResponse = responses[randomResponseIndex];
+    const responses = REPLYDATA;
+    const randomResponseIndex = getRandomArbitrary(0, responses.length - 1);
+    const randomResponse = responses[randomResponseIndex];
     return `#${hashtag} ${randomResponse} @${friend} `;
   }
 
@@ -88,13 +85,13 @@ export class TwitterBot {
    *
    */
   private async makeLike(tweet: Status) {
-    let tweetId = tweet.id_str;
+    const tweetId = tweet.id_str;
     await this.twitterClient.tweets
       .favoritesCreate({
         id: tweetId,
       })
-      .then((result) => {
-        console.log(chalk.green("Liked successfully"));
+      .then(() => {
+        console.log(chalk.green('Liked successfully'));
       })
       .catch((e) => console.log(e));
   }
@@ -105,13 +102,13 @@ export class TwitterBot {
    * @param tweet
    */
   private async makeRetweet(tweet: Status) {
-    let tweetId = tweet.id_str;
+    const tweetId = tweet.id_str;
     await this.twitterClient.tweets
       .statusesRetweetById({
         id: tweetId,
       })
-      .then((result) => {
-        console.log(chalk.green("Retweeted successfully"));
+      .then(() => {
+        console.log(chalk.green('Retweeted successfully'));
       })
       .catch((e) => console.log(e));
   }
@@ -129,8 +126,8 @@ export class TwitterBot {
         in_reply_to_status_id: tweetId,
         auto_populate_reply_metadata: true,
       })
-      .then((result) => {
-        console.log(chalk.green("Replyed successfully"));
+      .then(() => {
+        console.log(chalk.green('Replyed successfully'));
       })
       .catch((e) => console.log(e));
   }
@@ -141,19 +138,15 @@ export class TwitterBot {
    * @param mentions Users to follow
    */
   private async followMentions(mentions: string[]) {
-    console.log("Starting to follow...");
-    let counter: number = 1;
-    for await (let user of mentions) {
+    console.log('Starting to follow...');
+    let counter = 1;
+    for await (const user of mentions) {
       await this.twitterClient.accountsAndUsers
         .friendshipsCreate({
           screen_name: user,
         })
-        .then((result) => {
-          console.log(
-            chalk.green(
-              `User ${counter} of ${mentions.length} followed successfully`
-            )
-          );
+        .then(() => {
+          console.log(chalk.green(`User ${counter} of ${mentions.length} followed successfully`));
           counter += 1;
         })
         .catch((e) => console.log(e));
@@ -164,9 +157,9 @@ export class TwitterBot {
    * Get a random friend provided on .env
    *
    */
-  public getRandomFriend() {
-    let friendsArray = process.env.FRIENDS!.split(",");
-    let randomFriend = friendsArray[getRandomArbitrary(0, friendsArray.length)];
+  public getRandomFriend(): string {
+    const friendsArray = process.env.FRIENDS!.split(',');
+    const randomFriend = friendsArray[getRandomArbitrary(0, friendsArray.length)];
     console.log(randomFriend);
     return randomFriend;
   }
@@ -176,13 +169,13 @@ export class TwitterBot {
    * @param target
    *
    */
-  public async getTweet(target: string) {
+  public async getTweet(target: string): Promise<any> {
     return await this.twitterClient.tweets
       .statusesUserTimeline({
         screen_name: target,
         exclude_replies: true,
         include_rts: false,
-        tweet_mode: "extended",
+        tweet_mode: 'extended',
       })
       .then((result) => {
         return result[0];
@@ -196,9 +189,8 @@ export class TwitterBot {
    * @param qUser
    * @param rtweet
    */
-  async participate(qUser: UsersShow, rtweet: any) {
-    let user: UsersShow = qUser;
-    let tweet: any = rtweet;
+  async participate(rtweet: any) {
+    const tweet: any = rtweet;
     let hashtags: any[] = [];
     let mentions: string[] = [];
 
@@ -209,23 +201,20 @@ export class TwitterBot {
       console.log(chalk.yellow(`\nChecking if it's retweeted and liked`));
 
       if (!tweet.retweeted && !tweet.favorited) {
-        console.log("Not retweeted or liked");
+        console.log('Not retweeted or liked');
 
         hashtags = this.getHashtags(tweet);
         mentions = this.getMentions(tweet);
         await this.makeLike(tweet);
         await this.makeRetweet(tweet);
         await this.followMentions(mentions);
-        let responseTweet = this.constructTweet(
-          hashtags[0].text,
-          this.getRandomFriend()
-        );
+        const responseTweet = this.constructTweet(hashtags[0].text, this.getRandomFriend());
         await this.replyTweet(responseTweet, tweet.id_str);
       } else {
-        console.log("Already been retweeted or bookmarked");
+        console.log('Already been retweeted or bookmarked');
       }
     } else {
-      console.log(chalk.red("Its not a giveaway"));
+      console.log(chalk.red('Its not a giveaway'));
     }
   }
 }

@@ -1,7 +1,10 @@
-import { TwitterClient } from "twitter-api-client";
-import { TwitterBot } from "./bot";
-const chalk = require("chalk");
-require("dotenv").config();
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { TwitterClient } from 'twitter-api-client';
+import { TwitterBot } from './bot';
+import chalk from 'chalk';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config();
 
 //https://kaffeine.herokuapp.com/
 
@@ -13,32 +16,30 @@ let tryNumber = 1;
  * @param target User
  */
 async function assertNewTweet(target: string) {
-  let twitterClient = new TwitterClient({
+  const twitterClient = new TwitterClient({
     apiKey: process.env.API_KEY!,
     apiSecret: process.env.API_SECRET!,
     accessToken: process.env.ACCESS_TOKEN!,
     accessTokenSecret: process.env.ACCESS_TOKEN_SECRET!,
   });
 
-  let twitterBot = new TwitterBot(target, twitterClient);
+  const twitterBot = new TwitterBot(target, twitterClient);
 
   await twitterBot.getUser().then(async (result) => {
     await twitterBot.getTweet(result.screen_name).then((res) => {
-      let tweet: any = res;
+      const tweet: any = res;
       console.log(
-        `\n${chalk.blue(
-          "Date&Time"
-        )}: ${new Date().toLocaleString()}\n${chalk.blue(
-          "Tweet"
+        `\n${chalk.blue('Date&Time')}: ${new Date().toLocaleString()}\n${chalk.blue(
+          'Tweet',
         )}: \n\n──────────────────────────────────────────────────────────────────────────────────────\n${
           tweet.full_text
-        }\n──────────────────────────────────────────────────────────────────────────────────────`
+        }\n──────────────────────────────────────────────────────────────────────────────────────`,
       );
 
-      twitterBot.participate(result, tweet);
+      twitterBot.participate(tweet);
     });
   });
-  console.log("\n#############################################");
+  console.log('\n#############################################');
 }
 
 /**
@@ -46,7 +47,7 @@ async function assertNewTweet(target: string) {
  *
  */
 function getTargetArray() {
-  return process.env.TARGETS!.split(",");
+  return process.env.TARGETS!.split(',');
 }
 
 /**
@@ -58,11 +59,11 @@ async function doStuff() {
 
   console.log(
     chalk.cyan(
-      `\n|------------------- ${new Date().toLocaleString()} Iteration nº ${tryNumber} ---------------------|\n`
-    )
+      `\n|------------------- ${new Date().toLocaleString()} Iteration nº ${tryNumber} ---------------------|\n`,
+    ),
   );
 
-  for (let target of targets) {
+  for (const target of targets) {
     console.log(chalk.yellow(`\nNew check to --> ${target}`));
     await assertNewTweet(target);
   }
@@ -71,11 +72,7 @@ async function doStuff() {
 }
 
 console.log(
-  chalk.green(
-    `\nTWTOTES started with an interval of ${Number(
-      process.env.INTERVAL_S!
-    )} seconds`
-  )
+  chalk.green(`\nTWTOTES started with an interval of ${Number(process.env.INTERVAL_S!)} seconds`),
 );
 
 setInterval(doStuff, Number(process.env.INTERVAL_S!) * 1000);
