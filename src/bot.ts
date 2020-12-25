@@ -200,7 +200,7 @@ export class TwitterBot {
       console.log(chalk.green("It's a giveaway"));
       console.log(chalk.yellow(`\nChecking if it's retweeted and liked`));
 
-      if (!tweet.retweeted && !tweet.favorited) {
+      if (!tweet.retweeted != !tweet.favorited) {
         console.log('Not retweeted or liked');
 
         hashtags = this.getHashtags(tweet);
