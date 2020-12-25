@@ -186,7 +186,8 @@ export class TwitterBot {
       })
       .then((result) => {
         return result[0];
-      }).catch(err => console.log(err))
+      })
+      .catch((err) => console.log(err));
   }
 
   /**

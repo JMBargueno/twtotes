@@ -28,7 +28,9 @@ async function assertNewTweet(target: string) {
       console.log(
         `\n${chalk.blue(
           "Date&Time"
-        )}: ${new Date().toLocaleString()}\n${chalk.blue("Tweet")}: \n\n──────────────────────────────────────────────────────────────────────────────────────\n${
+        )}: ${new Date().toLocaleString()}\n${chalk.blue(
+          "Tweet"
+        )}: \n\n──────────────────────────────────────────────────────────────────────────────────────\n${
           tweet.full_text
         }\n──────────────────────────────────────────────────────────────────────────────────────`
       );
